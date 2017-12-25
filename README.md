@@ -1,11 +1,18 @@
 # Canvas Floating Points
 
-A canvas playground project - rendering floating points and lines connecting them
+A canvas playground project - rendering floating points and lines connecting them.
 
-**Expected Result**
+## Stack
+TypeScript + Webpack
 
-![Expected Result](./screenshots/expected.gif)
+## Result
+Expected Result | What I got
+---|---
+![Expected Result](./screenshots/expected.gif)|![What I got](./screenshots/demo.gif)
 
-**What I got**
 
-![What I got](./screenshots/demo.gif)
+## Versions
+
+Version | Update
+---|---
+0.0.1 | Only floating points bouncing within canvas.
