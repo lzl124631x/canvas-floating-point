@@ -6,11 +6,17 @@ var canvas = document.getElementById("canvas") as HTMLCanvasElement;
 var ctx: CanvasRenderingContext2D = canvas.getContext("2d");
 var bound = new Vector(0, 0);
 var circles: Circle[] = [];
+var mouse: Vector = null;
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     bound = new Vector(canvas.width, canvas.height);
+}
+
+function getMouse(dom: HTMLElement, mouseEvent: MouseEvent): Vector {
+  var rect = dom.getBoundingClientRect();
+  return new Vector(mouseEvent.clientX - rect.left, mouseEvent.clientY - rect.top);
 }
 
 function init() {
@@ -21,6 +27,10 @@ function init() {
     };
 
     window.onresize = resizeCanvas;
+
+    canvas.addEventListener("mousemove", function (e) {
+      mouse = getMouse(canvas, e);
+    }, false);
 }
 
 function createCircles() {
@@ -50,14 +60,15 @@ function draw() {
             if (c == neighbor) return;
             drawLine(c.center, neighbor.center);
         })
+        if (mouse) drawLine(c.center, mouse, 150)
     })
 
     window.requestAnimationFrame(draw);
 }
 
-function drawLine(from: Vector, to: Vector) {
+function drawLine(from: Vector, to: Vector, max: number = 80) {
     var dist = from.distTo(to);
-    var opacity = 1 - Math.min(dist / 80, 1);
+    var opacity = 1 - Math.min(dist / max, 1);
     if (!opacity) return;
     ctx.lineWidth = opacity * 3;
     ctx.strokeStyle = `rgba(255,255,255,${opacity}`;
