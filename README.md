@@ -16,3 +16,4 @@ Expected Result | What I got
 Version | Update
 ---|---
 0.0.1 | Only floating points bouncing within canvas.
+0.0.2 | Added connecting lines whose opacity and width are changing as distance change

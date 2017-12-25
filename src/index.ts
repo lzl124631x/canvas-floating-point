@@ -46,6 +46,10 @@ function draw() {
     circles.forEach((c) => {
         c.update(bound);
         c.draw(ctx);
+        circles.forEach((neighbor) => {
+            if (c == neighbor) return;
+            drawLine(c.center, neighbor.center);
+        })
     })
 
     window.requestAnimationFrame(draw);
@@ -53,10 +57,10 @@ function draw() {
 
 function drawLine(from: Vector, to: Vector) {
     var dist = from.distTo(to);
-    var opacity = 1 - Math.min(dist / 200, 1);
+    var opacity = 1 - Math.min(dist / 80, 1);
     if (!opacity) return;
     ctx.lineWidth = opacity * 3;
-    ctx.strokeStyle = `rgba(0,255,255,${opacity}`;
+    ctx.strokeStyle = `rgba(255,255,255,${opacity}`;
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.lineTo(to.x, to.y);
