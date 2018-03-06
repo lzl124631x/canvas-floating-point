@@ -5,6 +5,17 @@ A canvas playground project - rendering floating points and lines connecting the
 ## Stack
 TypeScript + Webpack
 
+## How to run
+
+```
+$ git clone https://github.com/lzl124631x/canvas-floating-point.git
+$ cd canvas-floating-point
+$ npm install
+$ npm run dev
+```
+
+Open `http://localhost:8080`.
+
 ## Result
 Expected Result | What I got
 ---|---
