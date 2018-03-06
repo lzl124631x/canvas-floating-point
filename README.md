@@ -29,3 +29,7 @@ Version | Update
 0.0.1 | Only floating points bouncing within canvas.
 0.0.2 | Added connecting lines whose opacity and width are changing as distance change.
 0.0.3 | Added connecting lines between points and mouse.
+
+## Note
+
+**2018/1/28** Just found there is a [repo](https://github.com/VincentGarreau/particles.js) dedicated for this!
