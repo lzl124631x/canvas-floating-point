@@ -33,18 +33,18 @@ export class Circle implements Drawable {
         return this;
     }
     private bounce(bound: Vector) {
-        if (this.center.x <= 0) {
-            this.center.x *= -1;
+        if (this.center.x - this.radius <= 0) {
+            this.center.x = 2 * this.radius - this.center.x;
             this.speed.x *= -1;
-        } else if (this.center.x >= bound.x) {
-            this.center.x = bound.x * 2 - this.center.x;
+        } else if (this.center.x + this.radius >= bound.x) {
+            this.center.x = 2 * (bound.x - this.radius) - this.center.x;
             this.speed.x *= -1;
         }
-        if (this.center.y <= 0) {
-            this.center.y *= -1;
+        if (this.center.y - this.radius <= 0) {
+            this.center.y = 2 * this.radius - this.center.y;
             this.speed.y *= -1;
-        } else if (this.center.y >= bound.y) {
-            this.center.y = bound.y * 2 - this.center.y;
+        } else if (this.center.y + this.radius >= bound.y) {
+            this.center.y = 2 * (bound.y - this.radius) - this.center.y;
             this.speed.y *= -1;
         }
     }
