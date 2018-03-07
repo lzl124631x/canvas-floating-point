@@ -1,37 +1,56 @@
+import { Vector } from "./vector";
+
 interface Drawable {
-    update(bound: Vector): this;
-    draw(ctx: CanvasRenderingContext2D): this;
+    update(bound: Vector): void;
+    draw(ctx: CanvasRenderingContext2D, mouseOffset: Vector): void;
 }
 
-export class Vector {
-    constructor(public x: number, public y: number) { }
+function offsetPoint(point: Vector, z: number, offset: Vector): Vector {
+    let ratio:number = 1 / Math.pow(z + 1, 2);
+    return point.add(offset.scale(ratio));
+}
 
-    distTo(v: Vector) {
-        return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2));
-    }
-
-    move(v: Vector) {
-        this.x += v.x;
-        this.y += v.y;
-        return this;
-    }
+function drawLine(ctx: CanvasRenderingContext2D, from: Vector, fromZ: number, to: Vector, toZ: number, offset: Vector, max: number = 100): void {
+    let dist = from.distance(to);
+    let opacity = 1 - Math.min(dist / max, 1);
+    if (!opacity) return;
+    from = offsetPoint(from, fromZ, offset);
+    to = offsetPoint(to, toZ, offset);
+    ctx.lineWidth = opacity * 3;
+    ctx.strokeStyle = `rgba(255,255,255,${opacity}`;
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
 }
 
 export class Circle implements Drawable {
     public speed: Vector = new Vector(0, 0);
-    constructor(public center: Vector, public radius: number){}
-    update(bound: Vector) {
-        this.center.move(this.speed);
+
+    constructor(public center: Vector, public radius: number, public z: number) { }
+
+    public update(bound: Vector): void {
+        this.center.addEqual(this.speed);
         this.bounce(bound);
-        return this;
     }
-    draw(ctx: CanvasRenderingContext2D) {
+
+    public draw(ctx: CanvasRenderingContext2D, offset: Vector): void {
         ctx.fillStyle = "#fff";
         ctx.beginPath();
-        ctx.arc(this.center.x, this.center.y, this.radius, 0, 2 * Math.PI);
+
+        if (this.z !== 1) {
+            ctx.fillStyle = "#777";
+        }
+
+        let center = offsetPoint(this.center, this.z, offset);
+        ctx.arc(center.x, center.y, this.radius, 0, 2 * Math.PI);
         ctx.fill();
-        return this;
     }
+
+    public lineTo(ctx: CanvasRenderingContext2D, to: Circle, offset: Vector): void {
+        drawLine(ctx, this.center, this.z, to.center, to.z, offset);
+    }
+
     private bounce(bound: Vector) {
         if (this.center.x - this.radius <= 0) {
             this.center.x = 2 * this.radius - this.center.x;

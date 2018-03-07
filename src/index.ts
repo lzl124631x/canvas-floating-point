@@ -1,12 +1,13 @@
-import { Vector, Circle } from './circle';
-import { getRandom } from './util';
+import { Vector } from "./vector";
+import { Circle } from "./circle";
+import { getRandom, getRandomInteger } from "./util";
 
 console.clear();
-var canvas = document.getElementById("canvas") as HTMLCanvasElement;
-var ctx: CanvasRenderingContext2D = canvas.getContext("2d");
-var bound = new Vector(0, 0);
-var circles: Circle[] = [];
-var mouse: Vector = null;
+let canvas = document.getElementById("canvas") as HTMLCanvasElement;
+let ctx: CanvasRenderingContext2D = canvas.getContext("2d");
+let bound = new Vector(0, 0);
+let circles: Circle[] = [];
+let mouse: Vector = new Vector(0, 0);
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -15,8 +16,8 @@ function resizeCanvas() {
 }
 
 function getMouse(dom: HTMLElement, mouseEvent: MouseEvent): Vector {
-  var rect = dom.getBoundingClientRect();
-  return new Vector(mouseEvent.clientX - rect.left, mouseEvent.clientY - rect.top);
+    let rect = dom.getBoundingClientRect();
+    return new Vector(mouseEvent.clientX - rect.left, mouseEvent.clientY - rect.top);
 }
 
 function init() {
@@ -29,18 +30,19 @@ function init() {
     window.onresize = resizeCanvas;
 
     canvas.addEventListener("mousemove", function (e) {
-      mouse = getMouse(canvas, e);
+        mouse = getMouse(canvas, e);
     }, false);
 }
 
 function createCircles() {
-    for (var i = 0; i < 100; ++i) {
-        var radius = getRandom(1, 5);
-        var x = getRandom(0, canvas.width);
-        var y = getRandom(0, canvas.height);
-        var circle = new Circle(new Vector(x, y), radius);
-        var speedX = getRandom(-1, 1);
-        var speedY = getRandom(-1, 1);
+    for (let i = 0; i < 100; ++i) {
+        let radius = getRandom(1, 5);
+        let x = getRandom(0, canvas.width);
+        let y = getRandom(0, canvas.height);
+        let z = 4 - Math.floor(i / 25);
+        let circle = new Circle(new Vector(x, y), radius, z);
+        let speedX = getRandom(-1, 1);
+        let speedY = getRandom(-1, 1);
         circle.speed = new Vector(speedX, speedY);
         circles.push(circle);
     }
@@ -53,29 +55,20 @@ function cleanCanvas() {
 function draw() {
     cleanCanvas();
 
-    circles.forEach((c) => {
+    let offset = mouse.sub(bound.scale(1 / 2));
+
+    circles.forEach((c: Circle) => {
         c.update(bound);
-        c.draw(ctx);
-        circles.forEach((neighbor) => {
+
+        c.draw(ctx, offset);
+        circles.forEach((neighbor: Circle) => {
             if (c == neighbor) return;
-            drawLine(c.center, neighbor.center);
-        })
-        if (mouse) drawLine(c.center, mouse, 150)
+            c.lineTo(ctx, neighbor, offset);
+        });
+        // if (mouse) drawLine(c.center, mouse, 150);
     })
 
     window.requestAnimationFrame(draw);
-}
-
-function drawLine(from: Vector, to: Vector, max: number = 80) {
-    var dist = from.distTo(to);
-    var opacity = 1 - Math.min(dist / max, 1);
-    if (!opacity) return;
-    ctx.lineWidth = opacity * 3;
-    ctx.strokeStyle = `rgba(255,255,255,${opacity}`;
-    ctx.beginPath();
-    ctx.moveTo(from.x, from.y);
-    ctx.lineTo(to.x, to.y);
-    ctx.stroke();
 }
 
 init();
